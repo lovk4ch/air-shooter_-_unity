@@ -4,8 +4,8 @@ public class Gimbal : Manager<Gimbal>, IPlayerObserver
 {
     private PlaneController target;
 
-    // [SerializeField]
-    // private float speed = 3f;
+    [SerializeField]
+    private float speed = 6;
 
     private void Awake()
     {
@@ -24,10 +24,7 @@ public class Gimbal : Manager<Gimbal>, IPlayerObserver
         if (target)
         {
             transform.position = target.transform.position;
-
-            /*Quaternion rotation = Quaternion.Euler(target.transform.rotation.eulerAngles.x, target.transform.rotation.eulerAngles.y, transform.rotation.eulerAngles.z);
-            transform.rotation = Quaternion.Lerp(transform.rotation, rotation, speed * delta);*/
-            transform.rotation = target.transform.rotation;
+            transform.rotation = Quaternion.Lerp(transform.rotation, target.transform.rotation, speed * delta);
         }
     }
 }
