@@ -30,7 +30,12 @@ public abstract class PlaneController : MonoBehaviour
             speed = minSpeed;
     }
 
-    protected virtual bool IsCrush(Collision collision)
+    /// <summary>
+    /// Check whether an crash occurred
+    /// </summary>
+    /// <param name="collision">Target collision</param>
+    /// <returns></returns>
+    protected virtual bool IsCrash(Collision collision)
     {
         if (collision.collider.CompareTag("Projectile"))
             return false;

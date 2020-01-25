@@ -59,7 +59,7 @@ public class ProjectileMoveScript : MonoBehaviour {
 	}
 
 	private void OnCollisionEnter (Collision collision) {
-		if (!collision.collider.CompareTag("Enemy") && !collided) {
+		if (!collision.collider.CompareTag("Projectile") && !collided) {
 			collided = true;
 			
 			if (hitSFX != null) {

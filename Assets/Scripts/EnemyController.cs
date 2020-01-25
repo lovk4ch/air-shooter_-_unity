@@ -3,15 +3,35 @@ using UnityEngine;
 
 public class EnemyController : PlaneController, IPlayerObserver
 {
+    /// <summary>
+    /// Pursuit mode for enemy
+    /// </summary>
     private bool isChase;
+
+    /// <summary>
+    /// Angular acceleration
+    /// </summary>
     private float lerpSpeed;
 
+    /// <summary>
+    /// Waypoints list for enemy route
+    /// </summary>
     [SerializeField]
     private List<Vector3> waypoints;
 
+    /// <summary>
+    /// Plane collider (for frustrum calculation)
+    /// </summary>
     public new Collider collider;
 
+    /// <summary>
+    /// Direction to nearest point or target
+    /// </summary>
     public Vector3 targetDir { get; private set; }
+
+    /// <summary>
+    /// Target for pursuit
+    /// </summary>
     public PlaneController target { get; private set; }
 
     protected override void Awake()
@@ -19,8 +39,6 @@ public class EnemyController : PlaneController, IPlayerObserver
         base.Awake();
 
         UnitManager.Instance.Add(this);
-        // UnitManager.Instance.SetTarget(this);
-
         lerpSpeed = maxLerpSpeed;
 
         waypoints = new List<Vector3> {
@@ -40,26 +58,32 @@ public class EnemyController : PlaneController, IPlayerObserver
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!IsCrush(collision))
+        if (!IsCrash(collision))
         {
             if (!collision.gameObject.GetComponent<ProjectileMoveScript>().isEnemyProjectile)
+            {
+                LevelManager.Instance.DefeatedCount++;
                 Destroy(gameObject);
+            }
         }
     }
 
-    private RaycastHit GetObstacle(Vector3 dir)
-    {
-        Ray ray = new Ray(transform.position, dir);
-        Physics.Raycast(ray, out RaycastHit hit);
-        return hit;
-    }
-
+    /// <summary>
+    /// Check that the path to the point is not blocked by anything
+    /// </summary>
+    /// <param name="dir">Direction to target point</param>
+    /// <returns></returns>
     private bool IsHit(Vector3 dir)
     {
-        RaycastHit hit = GetObstacle(dir);
+        RaycastHit hit = LevelManager.GetRay(transform.position, dir);
         return hit.collider != null && hit.distance < speed * 15;
     }
 
+    /// <summary>
+    /// Generate new waypoint for plane route
+    /// </summary>
+    /// <param name="startPoint">Current plane position</param>
+    /// <returns></returns>
     private Vector3 GetWaypoint(Vector3 startPoint)
     {
         Vector3 point = LevelManager.GetWaypoint();
@@ -113,6 +137,10 @@ public class EnemyController : PlaneController, IPlayerObserver
         transform.Translate(transform.forward * speed * delta, Space.World);
     }
 
+    /// <summary>
+    /// Sets the plane for pursuit mode
+    /// </summary>
+    /// <param name="target">Target plane</param>
     public void SetTarget(PlaneController target)
     {
         this.target = target;

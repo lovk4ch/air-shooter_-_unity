@@ -43,13 +43,15 @@ public class PlayerController : PlaneController
         if (!InputManager.Instance || !UnitManager.Instance)
             return;
 
+        InputManager.Instance.RemoveKeyAction(boost);
+        InputManager.Instance.RemoveKeyAction(shot);
+
         UnitManager.Instance.SetTarget(null);
-        InputManager.Instance.RemoveKeyActions(this);
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!IsCrush(collision))
+        if (!IsCrash(collision))
         {
             if (collision.gameObject.GetComponent<ProjectileMoveScript>().isEnemyProjectile)
                 Destroy(gameObject);

@@ -3,7 +3,7 @@
 public class UnitManager : Manager<UnitManager>
 {
     public List<IPlayerObserver> Observers { get; private set; }
-    private PlaneController player;
+    public PlaneController Player { get; private set; }
 
     private void Awake()
     {
@@ -13,8 +13,8 @@ public class UnitManager : Manager<UnitManager>
     public void Add(IPlayerObserver observer)
     {
         Observers.Add(observer);
-        if (player) {
-            observer.SetTarget(player);
+        if (Player) {
+            observer.SetTarget(Player);
         }
     }
 
@@ -27,25 +27,13 @@ public class UnitManager : Manager<UnitManager>
     {
         for (int i = 0; i < Observers.Count; i++)
         {
-            Observers[i].SetTarget(player);
+            Observers[i].SetTarget(Player);
         }
     }
 
     public void SetTarget(PlaneController player)
     {
-        this.player = player;
+        this.Player = player;
         Notify();
-    }
-
-    public void Clear()
-    {
-        for (int i = 0; i < Observers.Count; i++)
-        {
-            if (Observers[i] is PlaneController enemy)
-            {
-                Destroy(enemy.gameObject);
-                Remove(Observers[i--]);
-            }
-        }
     }
 }

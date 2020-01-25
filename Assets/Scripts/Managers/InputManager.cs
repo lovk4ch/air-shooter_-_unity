@@ -27,6 +27,7 @@ public class InputManager : Manager<InputManager>
 {
     public const KeyCode KeyAcceleration = KeyCode.LeftShift;
     public const KeyCode KeyFire = KeyCode.LeftControl;
+    public const KeyCode KeySpawn = KeyCode.Z;
 
     public const string HorizontalAxis = "Horizontal";
     public const string VerticalAxis = "Vertical";

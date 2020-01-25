@@ -50,26 +50,42 @@ public class EnemyUI : MonoBehaviour
             if (arrow.gameObject.activeSelf)
             {
                 var pos = Camera.main.WorldToScreenPoint(transform.position);
+                var scale = arrow.rectTransform.rect.width / 2;
 
                 var x = Mathf.Min(pos.x, Screen.width - pos.x);
                 var y = Mathf.Min(pos.y, Screen.height - pos.y);
+                int z;
 
                 if (x < y)
                 {
                     if (pos.x > Screen.width / 2)
-                        pos.x = Screen.width;
+                    {
+                        pos.x = Screen.width - scale;
+                        z = 0;
+                    }
                     else
-                        pos.x = 0;
+                    {
+                        pos.x = scale;
+                        z = 180;
+                    }
                 }
                 else
                 {
                     if (pos.y > Screen.height / 2)
-                        pos.y = Screen.height;
+                    {
+                        pos.y = Screen.height - scale;
+                        z = 90;
+                    }
                     else
-                        pos.y = 0;
+                    {
+                        pos.y = scale;
+                        z = -90;
+                    }
                 }
 
                 arrow.transform.position = pos;
+                arrow.transform.rotation = Quaternion.Euler(0, 0, z);
+                // arrow.transform.rotation = Quaternion.Euler(0, 0, x > y ? (pos.y == scale ? -90 : 90) : (pos.x == scale ? 180 : 0));
             }
         }
     }
