@@ -23,8 +23,12 @@ public class LevelManager : Manager<LevelManager>
     /// </summary>
     public float DefeatedCount { get; set; }
 
-    public Interface ui;
-    public GameObject planePrefab, playerPrefab;
+    public GameObject planePrefab;
+    public GameObject playerPrefab;
+
+    [SerializeField]
+    private Interface ui;
+    public Transform GameLayer => ui.GameLayer.transform;
 
     private void Awake()
     {
@@ -68,7 +72,18 @@ public class LevelManager : Manager<LevelManager>
         {
             Quaternion rotation = Quaternion.AngleAxis(Random.Range(0, 360), Vector3.up);
             Instantiate(playerPrefab, GetWaypoint(), rotation);
+            EnableGameLayer();
         }
+    }
+
+    public void EnableGameLayer()
+    {
+        ui.GameLayer.SetActive(true);
+    }
+
+    public void DisableGameLayer()
+    {
+        ui.GameLayer.SetActive(false);
     }
 
     public static RaycastHit GetRay(Vector3 pos, Vector3 dir)

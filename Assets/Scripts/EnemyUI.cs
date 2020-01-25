@@ -17,8 +17,8 @@ public class EnemyUI : MonoBehaviour
 
     private void Awake()
     {
-        billet = Instantiate(billetPrefab, LevelManager.Instance.ui.transform).GetComponent<Text>();
-        arrow = Instantiate(arrowPrefab, LevelManager.Instance.ui.transform).GetComponent<Image>();
+        billet = Instantiate(billetPrefab, LevelManager.Instance.GameLayer).GetComponent<Text>();
+        arrow = Instantiate(arrowPrefab, LevelManager.Instance.GameLayer).GetComponent<Image>();
 
         enemy = GetComponent<EnemyController>();
     }

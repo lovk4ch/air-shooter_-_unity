@@ -40,13 +40,14 @@ public class PlayerController : PlaneController
 
     private void OnDestroy()
     {
-        if (!InputManager.Instance || !UnitManager.Instance)
+        if (!InputManager.Instance || !UnitManager.Instance || !LevelManager.Instance)
             return;
 
         InputManager.Instance.RemoveKeyAction(boost);
         InputManager.Instance.RemoveKeyAction(shot);
 
         UnitManager.Instance.SetTarget(null);
+        LevelManager.Instance.DisableGameLayer();
     }
 
     private void OnCollisionEnter(Collision collision)

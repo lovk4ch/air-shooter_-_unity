@@ -78,8 +78,6 @@ public class ProjectileMoveScript : MonoBehaviour {
 			}
 		
 			speed = 0;
-			GetComponent<Rigidbody> ().isKinematic = true;
-
 			ContactPoint contact = collision.contacts [0];
 			Quaternion rot = Quaternion.FromToRotation (Vector3.up, contact.normal);
 			Vector3 pos = contact.point;
