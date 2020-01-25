@@ -4,14 +4,14 @@ using UnityEngine;
 public class EnemyController : PlaneController, IPlayerObserver
 {
     /// <summary>
-    /// Pursuit mode for enemy
-    /// </summary>
-    private bool isChase;
-
-    /// <summary>
     /// Angular acceleration
     /// </summary>
     private float lerpSpeed;
+
+    /// <summary>
+    /// Direction to nearest point or target
+    /// </summary>
+    private Vector3 pointDir;
 
     /// <summary>
     /// Waypoints list for enemy route
@@ -20,19 +20,31 @@ public class EnemyController : PlaneController, IPlayerObserver
     private List<Vector3> waypoints;
 
     /// <summary>
+    /// Target detection radius
+    /// </summary>
+    [SerializeField]
+    [Range(100, 1000)]
+    private float attackRadius = 300;
+
+    /// <summary>
     /// Plane collider (for frustrum calculation)
     /// </summary>
     public new Collider collider;
 
     /// <summary>
-    /// Direction to nearest point or target
-    /// </summary>
-    public Vector3 targetDir { get; private set; }
-
-    /// <summary>
     /// Target for pursuit
     /// </summary>
     public PlaneController target { get; private set; }
+
+    /// <summary>
+    /// Check if plane is in pursuit mode
+    /// </summary>
+    private bool isAttack => target && targetDir.magnitude < attackRadius;
+
+    /// <summary>
+    /// Distance to target
+    /// </summary>
+    public Vector3 targetDir => target.transform.position - transform.position;
 
     protected override void Awake()
     {
@@ -104,36 +116,32 @@ public class EnemyController : PlaneController, IPlayerObserver
         base.Update();
         float delta = Time.deltaTime;
 
-        if (waypoints.Count > 0 && !isChase)
+        if (!isAttack)
         {
-            if ((transform.position - waypoints[0]).magnitude < speed * lerpSpeed * 50 || IsHit(targetDir))
+            if (waypoints.Count > 0)
             {
-                waypoints.Add(GetWaypoint(waypoints[0]));
-                waypoints.RemoveAt(0);
-                lerpSpeed = 0;
+                if ((transform.position - waypoints[0]).magnitude < speed * lerpSpeed * 50 || IsHit(pointDir))
+                {
+                    waypoints.Add(GetWaypoint(waypoints[0]));
+                    waypoints.RemoveAt(0);
+                    lerpSpeed = 0;
+                }
+                pointDir = waypoints[0] - transform.position;
             }
-            else if (target && (transform.position - target.transform.position).magnitude < speed * 15)
+        }
+        else
+        {
+            pointDir = targetDir;
+            if (Quaternion.Angle(transform.rotation, Quaternion.LookRotation(pointDir)) < 5)
             {
-                isChase = true;
-                lerpSpeed = 0;
+                Gun.Shot();
             }
         }
 
         if (lerpSpeed < maxLerpSpeed)
             lerpSpeed += maxLerpSpeed * delta;
 
-        if (isChase && target) {
-            targetDir = target.transform.position - transform.position;
-            if (Quaternion.Angle(transform.rotation, Quaternion.LookRotation(targetDir)) < 5)
-            {
-                Gun.Shot();
-            }
-        }
-        else {
-            targetDir = waypoints[0] - transform.position;
-        }
-
-        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(targetDir), lerpSpeed);
+        transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(pointDir), lerpSpeed);
         transform.Translate(transform.forward * speed * delta, Space.World);
     }
 
